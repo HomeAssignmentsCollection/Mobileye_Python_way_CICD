@@ -1,0 +1,75 @@
+[MASTER]
+# Python version
+py-version = 3.9
+
+# Use multiple processes to speed up Pylint
+jobs = 0
+
+# List of plugins to load
+load-plugins =
+
+# Use multiple processes to speed up Pylint
+jobs = 0
+
+# Allow loading C extensions
+unsafe-load-any-extension = no
+
+# Discover python modules and packages in the file system subtree
+recursive = yes
+
+# Add any Python path to the list
+init-hook =
+
+# Use multiple processes to speed up Pylint
+jobs = 0
+
+[MESSAGES CONTROL]
+# Disable specific warnings
+disable = C0114, C0115, C0116, R0903, R0913, W0621, W0703, W0612, W0611
+
+[REPORTS]
+# Set the output format
+output-format = text
+
+# Include a brief explanation of the error
+msg-template = {path}:{line}: [{msg_id}({symbol}), {obj}] {msg}
+
+# Include a brief explanation of the error
+msg-template = {path}:{line}: [{msg_id}({symbol}), {obj}] {msg}
+
+# Include a brief explanation of the error
+msg-template = {path}:{line}: [{msg_id}({symbol}), {obj}] {msg}
+
+[BASIC]
+# Regular expression which should only match function or class names
+good-names = i,j,k,ex,Run,_,id
+
+# Regular expression which should only match correct variable names
+good-names-rgx = [a-z_][a-z0-9_]{2,30}$
+
+# Regular expression which should only match correct variable names
+good-names-rgx = [a-z_][a-z0-9_]{2,30}$
+
+# Regular expression which should only match correct variable names
+good-names-rgx = [a-z_][a-z0-9_]{2,30}$
+
+[FORMAT]
+# Maximum number of characters on a single line
+max-line-length = 88
+
+# Maximum number of lines in a module
+max-module-lines = 1000
+
+# String used as indentation unit
+indent-string = '    '
+
+[SIMILARITIES]
+# Minimum lines number of a similarity
+min-similarity-lines = 4
+
+# Ignore imports when computing similarities
+ignore-imports = yes
+
+[MISCELLANEOUS]
+# List of note tags to take into consideration
+notes = 

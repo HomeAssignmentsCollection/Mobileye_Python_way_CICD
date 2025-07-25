@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  product-pipeline:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    volumes:
+      - .:/app
+      - ./logs:/app/logs
+    working_dir: /app
+    environment:
+      - PYTHONPATH=/app
+      - INSIDE_DOCKER=1
+    command: python product_pipeline.py --help
+    user: "1000:1000"  # Use the appuser created in Dockerfile
+
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    volumes:
+      - .:/app
+      - ./logs:/app/logs
+    working_dir: /app
+    environment:
+      - PYTHONPATH=/app
+      - INSIDE_DOCKER=1
+    command: python -m pytest unit_test_PyTest/
+    user: "1000:1000"
+
+  # Development service with all dependencies
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    volumes:
+      - .:/app
+      - ./logs:/app/logs
+    working_dir: /app
+    environment:
+      - PYTHONPATH=/app
+      - INSIDE_DOCKER=1
+    command: python -c "import sys; print('Python version:', sys.version); import yaml; print('PyYAML version:', yaml.__version__)"
+    user: "1000:1000" 

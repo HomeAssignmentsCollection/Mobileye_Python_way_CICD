@@ -1,0 +1,86 @@
+products:
+  - product_name: "ProductA"
+    git_repository: "https://github.com/example/ProductA.git"
+    default_target_branch: "main"
+    repositories:
+      artifactory:
+        enabled: true
+        credentials_ref: "artifactory"
+      nexus:
+        enabled: false
+      s3:
+        enabled: true
+        credentials_ref: "s3"
+    notifications:
+      email:
+        enabled: true
+        config:
+          smtp_server: "smtp.a.example.com"
+          port: 587
+      slack:
+        enabled: true
+        config:
+          webhook_url: "https://hooks.slack.com/services/aaa"
+
+  - product_name: "ProductB"
+    git_repository: "https://github.com/example/ProductB.git"
+    default_target_branch: "develop"
+    repositories:
+      artifactory:
+        enabled: false
+      nexus:
+        enabled: true
+        credentials_ref: "nexus"
+      s3:
+        enabled: true
+        credentials_ref: "s3"
+    notifications:
+      email:
+        enabled: true
+        config:
+          smtp_server: "smtp.b.example.com"
+          port: 587
+      slack:
+        enabled: false
+
+  - product_name: "ProductC"
+    git_repository: "https://github.com/example/ProductC.git"
+    default_target_branch: "main"
+    repositories:
+      artifactory:
+        enabled: true
+        credentials_ref: "artifactory"
+      nexus:
+        enabled: true
+        credentials_ref: "nexus"
+      s3:
+        enabled: false
+    notifications:
+      email:
+        enabled: false
+      slack:
+        enabled: true
+        config:
+          webhook_url: "https://hooks.slack.com/services/ccc"
+
+  - product_name: "ProductD"
+    git_repository: "https://github.com/example/ProductD.git"
+    default_target_branch: "main"
+    repositories:
+      artifactory:
+        enabled: false
+      nexus:
+        enabled: false
+      s3:
+        enabled: true
+        credentials_ref: "s3"
+    notifications:
+      email:
+        enabled: true
+        config:
+          smtp_server: "smtp.d.example.com"
+          port: 587
+      slack:
+        enabled: true
+        config:
+          webhook_url: "https://hooks.slack.com/services/ddd"
