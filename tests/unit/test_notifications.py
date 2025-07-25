@@ -1,8 +1,8 @@
 import pytest
 from unittest.mock import patch, MagicMock
-from notifications.email_channel import EmailNotification
-from notifications.slack_channel import SlackNotification
-from notifications.base_channel import NotificationChannel
+from product_pipeline.notifications.email import EmailNotification
+from product_pipeline.notifications.slack import SlackNotification
+from product_pipeline.notifications.base import NotificationChannel
 
 
 class TestNotificationChannel:

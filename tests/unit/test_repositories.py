@@ -1,9 +1,9 @@
 import pytest
 from unittest.mock import patch, MagicMock
-from repositories.artifactory import ArtifactoryTarget
-from repositories.nexus import NexusTarget
-from repositories.s3 import S3Target
-from repositories.base_repository import DeploymentTarget
+from product_pipeline.repositories.artifactory import ArtifactoryTarget
+from product_pipeline.repositories.nexus import NexusTarget
+from product_pipeline.repositories.s3 import S3Target
+from product_pipeline.repositories.base import DeploymentTarget
 
 
 class TestDeploymentTarget:
@@ -105,7 +105,7 @@ class TestDeploymentTargetFactory:
 
     def test_create_artifactory_target(self):
         """Test creating Artifactory target."""
-        from pipelines.pipeline import create_deployment_target
+        from product_pipeline.core.pipeline import create_deployment_target
 
         repo_config = {
             "enabled": True,
@@ -119,7 +119,7 @@ class TestDeploymentTargetFactory:
 
     def test_create_nexus_target(self):
         """Test creating Nexus target."""
-        from pipelines.pipeline import create_deployment_target
+        from product_pipeline.core.pipeline import create_deployment_target
 
         repo_config = {
             "enabled": True,
@@ -133,7 +133,7 @@ class TestDeploymentTargetFactory:
 
     def test_create_s3_target(self):
         """Test creating S3 target."""
-        from pipelines.pipeline import create_deployment_target
+        from product_pipeline.core.pipeline import create_deployment_target
 
         repo_config = {
             "enabled": True,
@@ -147,7 +147,7 @@ class TestDeploymentTargetFactory:
 
     def test_create_disabled_target(self):
         """Test creating disabled target returns None."""
-        from pipelines.pipeline import create_deployment_target
+        from product_pipeline.core.pipeline import create_deployment_target
 
         repo_config = {"enabled": False, "credentials_ref": "artifactory"}
 

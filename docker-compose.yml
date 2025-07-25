@@ -1,48 +1,54 @@
 version: '3.8'
 
 services:
+  # Production pipeline service
   product-pipeline:
     build:
       context: .
-      dockerfile: Dockerfile
       target: production
     volumes:
-      - .:/app
+      - ./config:/app/config:ro
       - ./logs:/app/logs
-    working_dir: /app
     environment:
-      - PYTHONPATH=/app
       - INSIDE_DOCKER=1
-    command: python product_pipeline.py --help
-    user: "1000:1000"  # Use the appuser created in Dockerfile
-
-  test:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: production
-    volumes:
-      - .:/app
-      - ./logs:/app/logs
-    working_dir: /app
-    environment:
-      - PYTHONPATH=/app
-      - INSIDE_DOCKER=1
-    command: python -m pytest unit_test_PyTest/
     user: "1000:1000"
+    command: ["python", "-m", "product_pipeline.main", "--repo_name", "ProductA"]
 
-  # Development service with all dependencies
+  # Development environment
   dev:
     build:
       context: .
-      dockerfile: Dockerfile
-      target: production
+      target: development
     volumes:
       - .:/app
       - ./logs:/app/logs
-    working_dir: /app
     environment:
-      - PYTHONPATH=/app
       - INSIDE_DOCKER=1
-    command: python -c "import sys; print('Python version:', sys.version); import yaml; print('PyYAML version:', yaml.__version__)"
-    user: "1000:1000" 
+    user: "1000:1000"
+    command: ["python", "-m", "product_pipeline.main", "--help"]
+
+  # Test environment
+  test:
+    build:
+      context: .
+      target: development
+    volumes:
+      - .:/app
+      - ./logs:/app/logs
+    environment:
+      - INSIDE_DOCKER=1
+    user: "1000:1000"
+    command: ["python", "-m", "pytest", "tests/", "-v"]
+
+  # Code quality checks
+  quality:
+    build:
+      context: .
+      target: development
+    volumes:
+      - .:/app
+      - ./logs:/app/logs
+    environment:
+      - INSIDE_DOCKER=1
+    user: "1000:1000"
+    command: ["python", "-m", "pytest", "tests/", "--cov=src", "--cov-report=term"] 

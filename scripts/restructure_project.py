@@ -117,13 +117,13 @@ def create_init_files(project_root: Path, dry_run: bool = False):
 def update_imports(project_root: Path, dry_run: bool = False):
     """Update import statements in Python files."""
     import_patterns = [
-        ("from utils_py.logger_setup import", "from product_pipeline.utils.logging import"),
-        ("from utils_py.config_loader import", "from product_pipeline.utils.config import"),
-        ("from utils_py.config_helper import", "from product_pipeline.utils.helpers import"),
-        ("from pipelines.pipeline import", "from product_pipeline.core.pipeline import"),
-        ("from notifications.", "from product_pipeline.notifications."),
-        ("from repositories.", "from product_pipeline.repositories."),
-        ("from stages_placeholder.", "from product_pipeline.stages."),
+        ("from product_pipeline.utils.logging import", "from product_pipeline.utils.logging import"),
+        ("from product_pipeline.utils.config import", "from product_pipeline.utils.config import"),
+        ("from product_pipeline.utils.helpers import", "from product_pipeline.utils.helpers import"),
+        ("from product_pipeline.core.pipeline import", "from product_pipeline.core.pipeline import"),
+        ("from product_pipeline.notifications.", "from product_pipeline.notifications."),
+        ("from product_pipeline.repositories.", "from product_pipeline.repositories."),
+        ("from product_pipeline.stages.", "from product_pipeline.stages."),
     ]
     
     python_files = list(project_root.rglob("*.py"))

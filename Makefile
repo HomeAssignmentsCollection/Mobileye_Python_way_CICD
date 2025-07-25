@@ -32,7 +32,7 @@ install-deps:
 	pip install -r requirements.txt
 
 install-dev-deps:
-	pip install -r requirements-dev.txt
+	pip install -r code-quality/requirements-dev.txt
 
 pre-commit-install:
 	pre-commit install
@@ -42,30 +42,30 @@ pre-commit-run:
 	pre-commit run --all-files
 
 test:
-	python3 -m pytest unit_test_PyTest/
+	python3 -m pytest tests/
 
 test-cov:
-	python3 -m pytest unit_test_PyTest/ --cov=. --cov-report=html --cov-report=term
+	python3 -m pytest tests/ --cov=src --cov-report=html --cov-report=term
 
 lint:
-	flake8 .
+	flake8 src/ tests/ --config=code-quality/.flake8
 
 format:
-	black .
+	black src/ tests/ --config=pyproject.toml
 
 format-check:
-	black --check .
+	black --check src/ tests/ --config=pyproject.toml
 
 type-check:
-	mypy .
+	mypy src/ --config-file=pyproject.toml
 
 security-check:
-	bandit -r . -f json -o bandit-report.json
+	bandit -r src/ -f json -o bandit-report.json --configfile=pyproject.toml
 	@echo "Security scan completed. Check bandit-report.json for details."
 
 complexity-check:
-	radon cc . -a
-	radon mi . -a
+	radon cc src/ -a
+	radon mi src/ -a
 
 quality-check: format-check lint type-check security-check complexity-check
 	@echo "All quality checks completed!"
@@ -74,10 +74,10 @@ build:
 	docker build -t product-pipeline .
 
 docker-run:
-	docker run --rm -v $(PWD):/app -w /app product-pipeline python product_pipeline.py --help
+	docker run --rm -v $(PWD):/app -w /app product-pipeline python -m product_pipeline.main --help
 
 docker-test:
-	docker run --rm -v $(PWD):/app -w /app product-pipeline python -m pytest unit_test_PyTest/
+	docker run --rm -v $(PWD):/app -w /app product-pipeline python -m pytest tests/
 
 docker-dev:
 	docker-compose up dev
@@ -101,10 +101,10 @@ compose-build:
 # Development helpers
 check-deps:
 	python3 -c "import yaml; print('✓ PyYAML available')"
-	python3 -c "from utils_py.config_loader import load_yaml_file; print('✓ Config loader available')"
+	python3 -c "from src.product_pipeline.utils.config import load_yaml_file; print('✓ Config loader available')"
 
 run-example:
-	python3 product_pipeline.py --repo_name ProductA
+	python3 -m product_pipeline.main --repo_name ProductA
 
 # Documentation
 docs-build:
@@ -128,4 +128,18 @@ restructure:
 
 restructure-dry-run:
 	@echo "Showing what restructure would do (dry run)..."
-	python3 scripts/restructure_project.py --dry-run 
+	python3 scripts/restructure_project.py --dry-run
+
+# Code quality shortcuts
+code-quality-help:
+	@echo "Code Quality Tools:"
+	@echo "  make install-dev-deps    Install development dependencies"
+	@echo "  make pre-commit-install  Install pre-commit hooks"
+	@echo "  make quality-check       Run all quality checks"
+	@echo "  make format             Format code with Black"
+	@echo "  make lint               Run flake8 linting"
+	@echo "  make type-check         Run mypy type checking"
+	@echo "  make security-check     Run bandit security scan"
+	@echo "  make complexity-check   Run radon complexity analysis"
+	@echo ""
+	@echo "See code-quality/README.md for detailed documentation" 
