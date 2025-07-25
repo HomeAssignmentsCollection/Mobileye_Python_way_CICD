@@ -2,248 +2,248 @@
 
 ## Executive Summary
 
-После анализа текущей структуры проекта выявлены **критические проблемы**, которые требуют реорганизации для соответствия Python best practices и улучшения maintainability.
+After analyzing the current project structure, **critical issues** have been identified that require reorganization to comply with Python best practices and improve maintainability.
 
-## 🔴 Критические проблемы
+## 🔴 Critical Issues
 
-### **1. Нарушение Python Packaging Standards**
-- **Главный файл на корневом уровне**: `product_pipeline.py` должен быть в `src/`
-- **Неправильные импорты**: Абсолютные импорты из корня проекта
-- **Отсутствие src-layout**: Не используется стандартная структура Python пакетов
+### **1. Violation of Python Packaging Standards**
+- **Main file at root level**: `product_pipeline.py` should be in `src/`
+- **Incorrect imports**: Absolute imports from project root
+- **Missing src-layout**: Standard Python package structure not used
 
-### **2. Непоследовательное именование**
-- **`utils_py/`** vs **`utils/`** - нестандартное именование
-- **`unit_test_PyTest/`** vs **`tests/`** - нестандартное именование
-- **`stages_placeholder/`** - неясное назначение
+### **2. Inconsistent naming**
+- **`utils_py/`** vs **`utils/`** - non-standard naming
+- **`unit_test_PyTest/`** vs **`tests/`** - non-standard naming
+- **`stages_placeholder/`** - unclear purpose
 
-### **3. Дублирование и устаревшие файлы**
-- **`README.md`** и **`Readme.md`** - дублирование
-- **`architecture.txt`**, **`user_guide.md`** - устаревшие файлы
-- **Пустая директория `src/`** - не используется
+### **3. Duplication and outdated files**
+- **`README.md`** and **`Readme.md`** - duplication
+- **`architecture.txt`**, **`user_guide.md`** - outdated files
+- **Empty `src/` directory** - not used
 
-## 🟡 Проблемы конфигурации
+## 🟡 Configuration Issues
 
-### **1. Разбросанные конфигурационные файлы**
-- `config.yaml`, `secrets.yaml`, `env.example` на корневом уровне
-- Отсутствие централизованной директории конфигурации
+### **1. Scattered configuration files**
+- `config.yaml`, `secrets.yaml`, `env.example` at root level
+- Lack of centralized configuration directory
 
-### **2. Неоптимальная структура тестов**
-- Все тесты в одной директории
-- Отсутствие разделения на unit и integration тесты
+### **2. Suboptimal test structure**
+- All tests in one directory
+- No separation between unit and integration tests
 
-## ✅ Рекомендуемое решение
+## ✅ Recommended Solution
 
-### **Новая структура (Option 1 - Full Restructure)**
+### **New Structure (Option 1 - Full Restructure)**
 
 ```
 Mobileye_Python_way_CICD/
 ├── src/
-│   └── product_pipeline/            # Основной пакет
+│   └── product_pipeline/            # Main package
 │       ├── __init__.py
 │       ├── __version__.py
-│       ├── main.py                  # Точка входа
-│       ├── core/                    # Основная логика
+│       ├── main.py                  # Entry point
+│       ├── core/                    # Core logic
 │       │   ├── __init__.py
 │       │   └── pipeline.py
-│       ├── notifications/           # Каналы уведомлений
+│       ├── notifications/           # Notification channels
 │       │   ├── __init__.py
 │       │   ├── base.py
 │       │   ├── email.py
 │       │   └── slack.py
-│       ├── repositories/            # Цели развертывания
+│       ├── repositories/            # Deployment targets
 │       │   ├── __init__.py
 │       │   ├── base.py
 │       │   ├── artifactory.py
 │       │   ├── nexus.py
 │       │   └── s3.py
-│       ├── utils/                   # Утилиты
+│       ├── utils/                   # Utilities
 │       │   ├── __init__.py
 │       │   ├── config.py
 │       │   ├── helpers.py
 │       │   └── logging.py
-│       └── stages/                  # Этапы pipeline
+│       └── stages/                  # Pipeline stages
 │           ├── __init__.py
 │           ├── clone.py
 │           ├── deploy.py
 │           ├── test.py
 │           └── notify.py
-├── tests/                           # Тесты
+├── tests/                           # Tests
 │   ├── __init__.py
-│   ├── unit/                        # Unit тесты
+│   ├── unit/                        # Unit tests
 │   │   ├── test_pipeline.py
 │   │   ├── test_notifications.py
 │   │   ├── test_repositories.py
 │   │   └── test_utils.py
-│   └── integration/                 # Integration тесты
+│   └── integration/                 # Integration tests
 │       └── test_integration.py
-├── config/                          # Конфигурация
+├── config/                          # Configuration
 │   ├── config.yaml
 │   ├── secrets.yaml
 │   └── env.example
-├── docs/                            # Документация
-├── scripts/                         # Скрипты
-├── requirements*.txt                # Зависимости
-├── pyproject.toml                   # Конфигурация проекта
+├── docs/                            # Documentation
+├── scripts/                         # Scripts
+├── requirements*.txt                # Dependencies
+├── pyproject.toml                   # Project configuration
 ├── setup.py
-├── Dockerfile                       # Контейнеры
+├── Dockerfile                       # Containers
 ├── docker-compose.yml
-├── Makefile                         # Сборка
-├── .pre-commit-config.yaml          # Качество кода
+├── Makefile                         # Build
+├── .pre-commit-config.yaml          # Code quality
 ├── .github/workflows/               # CI/CD
 ├── .gitignore                       # Git
-├── README.md                        # Документация
+├── README.md                        # Documentation
 ├── CONTRIBUTING.md
 ├── CODE_OF_CONDUCT.md
 └── LICENSE
 ```
 
-## 🚀 Преимущества реорганизации
+## 🚀 Benefits of reorganization
 
-### **1. Соответствие стандартам**
+### **1. Compliance with standards**
 - ✅ **Python Packaging Standards** (PEP 517/518)
-- ✅ **src-layout** для безопасности импортов
-- ✅ **Стандартные имена директорий** (`tests/`, `utils/`)
+- ✅ **src-layout** for safety of imports
+- ✅ **Standard directory names** (`tests/`, `utils/`)
 
-### **2. Улучшенная maintainability**
-- ✅ **Логическая группировка** связанной функциональности
-- ✅ **Четкое разделение** core, utils, stages, etc.
-- ✅ **Интуитивная навигация** по проекту
+### **2. Improved maintainability**
+- ✅ **Logical grouping** of related functionality
+- ✅ **Clear separation** of core, utils, stages, etc.
+- ✅ **Intuitive navigation** through the project
 
-### **3. Профессиональные стандарты**
-- ✅ **Industry best practices** - общая структура проектов
-- ✅ **Tool compatibility** - лучшая поддержка инструментов
-- ✅ **Team collaboration** - четкие области ответственности
+### **3. Professional standards**
+- ✅ **Industry best practices** - overall project structure
+- ✅ **Tool compatibility** - better tool support
+- ✅ **Team collaboration** - clear areas of responsibility
 
-### **4. Масштабируемость**
-- ✅ **Легкое расширение** - добавление новых модулей
-- ✅ **Четкие границы** - где добавлять новые функции
-- ✅ **Collaboration** - четкие области владения
+### **4. Scalability**
+- ✅ **Easy expansion** - adding new modules
+- ✅ **Clear boundaries** - where to add new functions
+- ✅ **Collaboration** - clear ownership areas
 
-## 📋 План реализации
+## 📋 Implementation Plan
 
-### **Этап 1: Подготовка**
+### **Phase 1: Preparation**
 ```bash
-# Создать резервную копию
+# Create a backup
 git stash
 git checkout -b restructure-project
 
-# Протестировать изменения
+# Test changes
 make restructure-dry-run
 ```
 
-### **Этап 2: Реорганизация**
+### **Phase 2: Reorganization**
 ```bash
-# Выполнить реорганизацию
+# Perform reorganization
 make restructure
 
-# Проверить изменения
+# Check changes
 git status
 git diff
 ```
 
-### **Этап 3: Обновление конфигурации**
+### **Phase 3: Update configuration**
 ```bash
-# Обновить pyproject.toml
-# Обновить setup.py
-# Обновить Dockerfile
-# Обновить Makefile
+# Update pyproject.toml
+# Update setup.py
+# Update Dockerfile
+# Update Makefile
 ```
 
-### **Этап 4: Тестирование**
+### **Phase 4: Testing**
 ```bash
-# Запустить тесты
+# Run tests
 make test
 
-# Проверить качество кода
+# Check code quality
 make quality-check
 
-# Проверить Docker сборку
+# Check Docker build
 make build
 ```
 
-## 🛠️ Инструменты для реорганизации
+## 🛠️ Tools for reorganization
 
-### **Автоматический скрипт**
+### **Automatic script**
 ```bash
-# Показать что будет сделано
+# Show what will be done
 make restructure-dry-run
 
-# Выполнить реорганизацию
+# Perform reorganization
 make restructure
 ```
 
-### **Ручные команды**
+### **Manual commands**
 ```bash
-# Создать новую структуру
+# Create new structure
 mkdir -p src/product_pipeline/{core,notifications,repositories,utils,stages}
 mkdir -p tests/{unit,integration}
 mkdir -p config
 
-# Переместить файлы
+# Move files
 mv product_pipeline.py src/product_pipeline/main.py
 mv pipelines/* src/product_pipeline/core/
 mv notifications/* src/product_pipeline/notifications/
-# ... и так далее
+# ... and so on
 ```
 
-## 📊 Оценка рисков
+## 📊 Risk Assessment
 
-### **Низкий риск**
-- ✅ **Автоматизированный процесс** - скрипт делает все изменения
-- ✅ **Dry-run режим** - можно проверить изменения заранее
-- ✅ **Git backup** - все изменения отслеживаются
-- ✅ **Постепенная миграция** - можно делать по этапам
+### **Low risk**
+- ✅ **Automated process** - script does all changes
+- ✅ **Dry-run mode** - can check changes in advance
+- ✅ **Git backup** - all changes are tracked
+- ✅ **Gradual migration** - can be done in phases
 
-### **Средний риск**
-- ⚠️ **Обновление импортов** - требует тестирования
-- ⚠️ **Конфигурационные файлы** - нужно обновить пути
-- ⚠️ **CI/CD pipeline** - может потребовать обновления
+### **Medium risk**
+- ⚠️ **Import updates** - requires testing
+- ⚠️ **Configuration files** - need to update paths
+- ⚠️ **CI/CD pipeline** - may require updates
 
-## 🎯 Рекомендации
+## 🎯 Recommendations
 
-### **Немедленные действия**
-1. **Выбрать подход** - Option 1 (Full Restructure)
-2. **Создать ветку** для реорганизации
-3. **Протестировать** dry-run режим
-4. **Выполнить реорганизацию** в безопасной среде
+### **Immediate actions**
+1. **Choose approach** - Option 1 (Full Restructure)
+2. **Create a branch** for reorganization
+3. **Test** dry-run mode
+4. **Perform reorganization** in a safe environment
 
-### **Долгосрочные улучшения**
-1. **Добавить type hints** по всему коду
-2. **Улучшить логирование** конфигурацию
-3. **Добавить валидацию** конфигурации
-4. **Создать CLI интерфейс** с click или typer
-5. **Добавить мониторинг** и метрики
+### **Long-term improvements**
+1. **Add type hints** to all code
+2. **Improve logging** configuration
+3. **Add configuration validation**
+4. **Create CLI interface** with click or typer
+5. **Add monitoring** and metrics
 
-### **Контроль качества**
-1. **Поддерживать покрытие тестов** во время миграции
-2. **Обновлять документацию** по мере изменений
-3. **Проверять работу всех инструментов** с новой структурой
-4. **Тестировать Docker сборки** и развертывания
+### **Quality control**
+1. **Maintain test coverage** during migration
+2. **Update documentation** as changes occur
+3. **Check functionality of all tools** with new structure
+4. **Test Docker builds** and deployments
 
-## 📈 Ожидаемые результаты
+## 📈 Expected results
 
-### **Краткосрочные (1-2 недели)**
-- ✅ **Улучшенная структура** проекта
-- ✅ **Соответствие стандартам** Python
-- ✅ **Лучшая организация** кода
+### **Short-term (1-2 weeks)**
+- ✅ **Improved project structure**
+- ✅ **Compliance with Python standards**
+- ✅ **Better code organization**
 
-### **Долгосрочные (1-3 месяца)**
-- ✅ **Повышенная maintainability**
-- ✅ **Улучшенная масштабируемость**
-- ✅ **Профессиональный вид** проекта
-- ✅ **Лучшая совместимость** с инструментами
+### **Long-term (1-3 months)**
+- ✅ **Increased maintainability**
+- ✅ **Improved scalability**
+- ✅ **Professional look** of the project
+- ✅ **Better compatibility** with tools
 
-## 🏁 Заключение
+## 🏁 Conclusion
 
-**Реорганизация структуры проекта критически необходима** для:
+**Reorganization of the project structure is critically necessary** for:
 
-1. **Соответствия Python best practices**
-2. **Улучшения maintainability и scalability**
-3. **Профессионального развития проекта**
-4. **Лучшей интеграции с современными инструментами**
+1. **Compliance with Python best practices**
+2. **Improvement of maintainability and scalability**
+3. **Professional project development**
+4. **Better integration with modern tools**
 
-**Рекомендуемый подход**: Option 1 (Full Restructure) с использованием автоматизированного скрипта для минимизации рисков и обеспечения консистентности изменений.
+**Recommended approach**: Option 1 (Full Restructure) with automated script to minimize risks and ensure consistency of changes.
 
-**Временные затраты**: 1-2 дня на реорганизацию + 1 неделя на тестирование и финальную настройку.
+**Time investment**: 1-2 days for reorganization + 1 week for testing and final setup.
 
-**Риски**: Низкие при использовании автоматизированного подхода и proper testing. 
+**Risks**: Low when using automated approach and proper testing. 
