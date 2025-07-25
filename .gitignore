@@ -83,4 +83,39 @@ secrets.yaml
 .idea/
 *.iml
 *.sublime-workspace
-*.sublime-project 
+*.sublime-project
+
+# Additional patterns
+# Security reports
+bandit-report.json
+safety-report.json
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.pid
+*.seed
+*.pid.lock
+
+# Backup files
+*.backup
+*.old
+*.orig
+
+# Local development
+local/
+dev/ 

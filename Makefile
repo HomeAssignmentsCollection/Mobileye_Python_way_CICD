@@ -3,6 +3,7 @@
 .PHONY: help test lint format build docker-run clean docker-test docker-dev install-deps
 .PHONY: install-dev-deps pre-commit-install pre-commit-run quality-check security-check
 .PHONY: complexity-check type-check coverage-report docs-build restructure restructure-dry-run
+.PHONY: naming-check fix-naming cleanup
 
 help:
 	@echo "Available targets:"
@@ -24,7 +25,10 @@ help:
 	@echo "  docker-test       Run tests in Docker"
 	@echo "  docker-dev        Run development environment in Docker"
 	@echo "  clean             Remove Python cache and build artifacts"
+	@echo "  cleanup           Remove temporary files and caches"
 	@echo "  docs-build        Build documentation"
+	@echo "  naming-check      Check naming conventions"
+	@echo "  fix-naming        Fix naming conventions"
 	@echo "  restructure       Restructure project to follow Python packaging best practices"
 	@echo "  restructure-dry-run Show what restructure would do without making changes"
 
@@ -88,6 +92,9 @@ clean:
 	find . -type d -name __pycache__ -delete
 	find . -type f -name "*.pyc" -delete
 
+cleanup:
+	python3 scripts/cleanup.py
+
 # Docker Compose shortcuts
 compose-up:
 	docker-compose up
@@ -113,6 +120,15 @@ docs-build:
 # CI/CD helpers
 ci-check: quality-check test-cov
 	@echo "CI checks completed successfully!"
+
+# Naming conventions
+naming-check:
+	@echo "Checking naming conventions..."
+	python3 scripts/fix_naming_conventions.py
+
+fix-naming:
+	@echo "Fixing naming conventions..."
+	python3 scripts/fix_naming_conventions.py
 
 # Project restructuring
 restructure:
@@ -141,5 +157,7 @@ code-quality-help:
 	@echo "  make type-check         Run mypy type checking"
 	@echo "  make security-check     Run bandit security scan"
 	@echo "  make complexity-check   Run radon complexity analysis"
+	@echo "  make naming-check       Check naming conventions"
+	@echo "  make fix-naming         Fix naming conventions"
 	@echo ""
 	@echo "See code-quality/README.md for detailed documentation" 
