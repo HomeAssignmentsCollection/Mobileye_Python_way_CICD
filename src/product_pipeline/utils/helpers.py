@@ -1,6 +1,9 @@
 import sys
 from product_pipeline.utils.logging import get_logger
-from product_pipeline.core.pipeline import create_deployment_target, create_notification_channel
+from product_pipeline.core.pipeline import (
+    create_deployment_target,
+    create_notification_channel,
+)
 
 logger = get_logger("ConfigHelper")
 

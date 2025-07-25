@@ -1,8 +1,8 @@
 import pytest
 from unittest.mock import patch, MagicMock
-from product_pipeline.notifications.email import EmailNotification
-from product_pipeline.notifications.slack import SlackNotification
-from product_pipeline.notifications.base import NotificationChannel
+from src.product_pipeline.notifications.email import EmailNotification
+from src.product_pipeline.notifications.slack import SlackNotification
+from src.product_pipeline.notifications.base import NotificationChannel
 
 
 class TestNotificationChannel:
@@ -24,7 +24,7 @@ class TestEmailNotification:
         email_notif = EmailNotification(config=config)
         assert email_notif.config == config
 
-    @patch("notifications.email_channel.smtplib.SMTP")
+    @patch("smtplib.SMTP")
     def test_email_notification_send(self, mock_smtp):
         """Test email notification sending."""
         config = {"smtp_server": "smtp.example.com", "port": 587}
@@ -53,7 +53,7 @@ class TestSlackNotification:
         slack_notif = SlackNotification(config=config)
         assert slack_notif.config == config
 
-    @patch("notifications.slack_channel.requests.post")
+    @patch("requests.post")
     def test_slack_notification_send(self, mock_post):
         """Test Slack notification sending."""
         config = {"webhook_url": "https://hooks.slack.com/services/test"}

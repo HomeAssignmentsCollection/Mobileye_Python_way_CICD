@@ -1,12 +1,11 @@
 import sys
 import os
 import pytest
-import datetime
 
 # Add the project root directory to the Python module search path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
-import product_pipeline  # Import the main module
+from src.product_pipeline.main import main
 
 # Fake implementations for external functions
 
@@ -58,15 +57,19 @@ def test_product_pipeline_valid(monkeypatch, capsys):
     This simulates passing valid command-line arguments and verifies output.
     """
     # Override external configuration functions with fake implementations
-    monkeypatch.setattr(product_pipeline, "load_configuration", fake_load_configuration)
     monkeypatch.setattr(
-        product_pipeline, "find_product_config", fake_find_product_config
+        "src.product_pipeline.utils.config.load_configuration", fake_load_configuration
     )
     monkeypatch.setattr(
-        product_pipeline, "init_deployment_targets", fake_init_deployment_targets
+        "src.product_pipeline.utils.helpers.find_product_config", fake_find_product_config
     )
     monkeypatch.setattr(
-        product_pipeline, "init_notification_channels", fake_init_notification_channels
+        "src.product_pipeline.utils.helpers.init_deployment_targets",
+        fake_init_deployment_targets,
+    )
+    monkeypatch.setattr(
+        "src.product_pipeline.utils.helpers.init_notification_channels",
+        fake_init_notification_channels,
     )
 
     # Set sys.argv to simulate command-line arguments for a valid case
@@ -80,7 +83,7 @@ def test_product_pipeline_valid(monkeypatch, capsys):
     monkeypatch.setattr(sys, "argv", test_args)
 
     # Run the main function
-    product_pipeline.main()
+    main()
 
     # Capture the output and verify expected strings
     output = capsys.readouterr().out
@@ -95,15 +98,19 @@ def test_product_pipeline_invalid_stage(monkeypatch, capsys):
     An invalid stage should cause the script to exit with error code 1.
     """
     # Override external configuration functions with fake implementations
-    monkeypatch.setattr(product_pipeline, "load_configuration", fake_load_configuration)
     monkeypatch.setattr(
-        product_pipeline, "find_product_config", fake_find_product_config
+        "src.product_pipeline.utils.config.load_configuration", fake_load_configuration
     )
     monkeypatch.setattr(
-        product_pipeline, "init_deployment_targets", fake_init_deployment_targets
+        "src.product_pipeline.utils.helpers.find_product_config", fake_find_product_config
     )
     monkeypatch.setattr(
-        product_pipeline, "init_notification_channels", fake_init_notification_channels
+        "src.product_pipeline.utils.helpers.init_deployment_targets",
+        fake_init_deployment_targets,
+    )
+    monkeypatch.setattr(
+        "src.product_pipeline.utils.helpers.init_notification_channels",
+        fake_init_notification_channels,
     )
 
     # Set sys.argv with an invalid stage ("invalid")
@@ -117,7 +124,7 @@ def test_product_pipeline_invalid_stage(monkeypatch, capsys):
     monkeypatch.setattr(sys, "argv", test_args)
 
     with pytest.raises(SystemExit) as e:
-        product_pipeline.main()
+        main()
 
     # Check that the exit code is 1
     assert e.value.code == 1

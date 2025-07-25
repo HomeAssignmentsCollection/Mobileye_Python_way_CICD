@@ -11,11 +11,11 @@ def load_yaml_file(filepath):
 
 
 def load_configuration():
-    # Assume config.yaml and secrets.yaml are in the project root.
+    # Assume config.yaml and secrets.yaml are in the config/ directory.
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    project_root = os.path.dirname(script_dir)
-    config_path = os.path.join(project_root, "config.yaml")
-    secrets_path = os.path.join(project_root, "secrets.yaml")
+    project_root = os.path.dirname(os.path.dirname(os.path.dirname(script_dir)))
+    config_path = os.path.join(project_root, "config", "config.yaml")
+    secrets_path = os.path.join(project_root, "config", "secrets.yaml")
 
     if not os.path.exists(config_path):
         logger.error(f"Configuration file {config_path} not found!")

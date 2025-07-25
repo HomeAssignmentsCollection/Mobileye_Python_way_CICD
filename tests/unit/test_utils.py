@@ -2,7 +2,7 @@ import pytest
 import tempfile
 import os
 from unittest.mock import patch, mock_open
-from product_pipeline.utils.config import load_configuration, load_yaml_file
+from src.product_pipeline.utils.config import load_configuration, load_yaml_file
 
 
 def test_load_yaml_file():
@@ -46,7 +46,7 @@ def test_load_configuration_success(mock_file, mock_exists):
         mock_open(read_data=secrets_content).return_value,
     ]
 
-    with patch("utils_py.config_loader.load_yaml_file") as mock_load:
+    with patch("src.product_pipeline.utils.config.load_yaml_file") as mock_load:
         mock_load.side_effect = [
             {"products": [{"product_name": "TestProduct"}]},
             {"artifactory": {"username": "test_user"}},

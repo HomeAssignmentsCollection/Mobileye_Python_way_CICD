@@ -1,14 +1,2 @@
 # Runtime dependencies (required for the application to run)
 PyYAML==6.0.2
-
-# Development dependencies (for testing, linting, etc.)
-pytest==8.3.4
-flake8==7.0.0
-black==24.12.0
-isort==5.13.2
-mypy==1.8.0
-bandit==1.7.7
-
-# Optional: for future email/Slack implementations
-# requests==2.31.0
-# smtplib (built-in)
