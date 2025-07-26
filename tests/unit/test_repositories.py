@@ -1,9 +1,9 @@
 import pytest
-from unittest.mock import patch, MagicMock
-from product_pipeline.repositories.artifactory import ArtifactoryTarget
-from product_pipeline.repositories.nexus import NexusTarget
-from product_pipeline.repositories.s3 import S3Target
-from product_pipeline.repositories.base import DeploymentTarget
+from unittest.mock import MagicMock
+from src.product_pipeline.repositories.artifactory import ArtifactoryTarget
+from src.product_pipeline.repositories.nexus import NexusTarget
+from src.product_pipeline.repositories.s3 import S3Target
+from src.product_pipeline.repositories.base import DeploymentTarget
 
 
 class TestDeploymentTarget:

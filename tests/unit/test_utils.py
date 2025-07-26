@@ -1,5 +1,4 @@
 import pytest
-import tempfile
 import os
 from unittest.mock import patch, mock_open
 from src.product_pipeline.utils.config import load_configuration, load_yaml_file

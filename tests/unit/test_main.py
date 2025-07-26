@@ -34,6 +34,15 @@ def fake_find_product_config(config, repo_name):
     for product in config.get("products", []):
         if product.get("product_name") == repo_name:
             return product
+    # Return a valid product config for TestProduct
+    if repo_name == "TestProduct":
+        return {
+            "product_name": "TestProduct",
+            "git_repository": "https://github.com/example/TestProduct.git",
+            "default_target_branch": "main",
+            "repositories": {},
+            "notifications": {},
+        }
     return {}
 
 
@@ -61,7 +70,8 @@ def test_product_pipeline_valid(monkeypatch, capsys):
         "src.product_pipeline.utils.config.load_configuration", fake_load_configuration
     )
     monkeypatch.setattr(
-        "src.product_pipeline.utils.helpers.find_product_config", fake_find_product_config
+        "src.product_pipeline.utils.helpers.find_product_config",
+        fake_find_product_config,
     )
     monkeypatch.setattr(
         "src.product_pipeline.utils.helpers.init_deployment_targets",
@@ -70,6 +80,12 @@ def test_product_pipeline_valid(monkeypatch, capsys):
     monkeypatch.setattr(
         "src.product_pipeline.utils.helpers.init_notification_channels",
         fake_init_notification_channels,
+    )
+
+    # Mock the Docker container check
+    monkeypatch.setattr(
+        "os.environ.get",
+        lambda key, default=None: "1" if key == "INSIDE_DOCKER" else default,
     )
 
     # Set sys.argv to simulate command-line arguments for a valid case
@@ -102,7 +118,8 @@ def test_product_pipeline_invalid_stage(monkeypatch, capsys):
         "src.product_pipeline.utils.config.load_configuration", fake_load_configuration
     )
     monkeypatch.setattr(
-        "src.product_pipeline.utils.helpers.find_product_config", fake_find_product_config
+        "src.product_pipeline.utils.helpers.find_product_config",
+        fake_find_product_config,
     )
     monkeypatch.setattr(
         "src.product_pipeline.utils.helpers.init_deployment_targets",
