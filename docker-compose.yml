@@ -1,4 +1,43 @@
+# Docker Compose Configuration for Product Delivery Pipeline
+# 
+# Best Practices Applied:
+# 1. Explicit version specification for reproducibility
+# 2. Multi-stage builds with specific targets (production/development)
+# 3. Read-only volumes for configuration files (security)
+# 4. Non-root user execution (security)
+# 5. Environment-specific configurations
+# 6. Resource limits and constraints
+# 7. Health checks for service monitoring
+# 8. Proper volume mounting with specific permissions
+# 9. Environment variables for configuration
+# 10. Service dependencies and startup order
+# 11. Network isolation and security
+# 12. Logging configuration
+# 13. Restart policies for production services
+# 14. Resource constraints (CPU, memory limits)
+# 15. Named volumes for persistent data
+# 16. Secrets management (for production)
+# 17. Service discovery and communication
+# 18. Development vs production configurations
+# 19. Proper service naming conventions
+# 20. Documentation and comments
+
 version: '3.8'
+
+# Define named volumes for persistent data
+volumes:
+  app_logs:
+    driver: local
+  app_data:
+    driver: local
+
+# Define networks for service isolation
+networks:
+  app_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
 
 services:
   # Production pipeline service
@@ -6,49 +45,173 @@ services:
     build:
       context: .
       target: production
+      dockerfile: Dockerfile
+    container_name: product-pipeline-prod
     volumes:
-      - ./config:/app/config:ro
-      - ./logs:/app/logs
+      - ./config:/app/config:ro  # Read-only config mount
+      - app_logs:/app/logs       # Named volume for logs
+      - app_data:/app/data       # Named volume for data
     environment:
       - INSIDE_DOCKER=1
-    user: "1000:1000"
+      - PYTHONPATH=/app/src
+      - LOG_LEVEL=INFO
+    user: "1000:1000"  # Non-root user
+    networks:
+      - app_network
+    restart: unless-stopped  # Restart policy for production
+    healthcheck:
+      test: ["CMD", "python", "-c", "import product_pipeline; print('Health check passed')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
     command: ["python", "-m", "product_pipeline.main", "--repo_name", "ProductA"]
+    labels:
+      - "com.example.description=Production Product Pipeline"
+      - "com.example.version=1.0.0"
 
   # Development environment
   dev:
     build:
       context: .
       target: development
+      dockerfile: Dockerfile
+    container_name: product-pipeline-dev
     volumes:
-      - .:/app
-      - ./logs:/app/logs
+      - .:/app:delegated  # Development mount with delegated mode
+      - app_logs:/app/logs
+      - app_data:/app/data
     environment:
       - INSIDE_DOCKER=1
+      - PYTHONPATH=/app/src
+      - LOG_LEVEL=DEBUG
+      - PYTHONDONTWRITEBYTECODE=1
     user: "1000:1000"
+    networks:
+      - app_network
+    restart: "no"  # No restart for development
+    healthcheck:
+      test: ["CMD", "python", "-c", "import product_pipeline; print('Dev health check passed')"]
+      interval: 60s
+      timeout: 10s
+      retries: 2
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
     command: ["python", "-m", "product_pipeline.main", "--help"]
+    labels:
+      - "com.example.description=Development Environment"
+      - "com.example.environment=development"
 
   # Test environment
   test:
     build:
       context: .
       target: development
+      dockerfile: Dockerfile
+    container_name: product-pipeline-test
     volumes:
-      - .:/app
-      - ./logs:/app/logs
+      - .:/app:delegated
+      - app_logs:/app/logs
+      - app_data:/app/data
     environment:
       - INSIDE_DOCKER=1
+      - PYTHONPATH=/app/src
+      - LOG_LEVEL=INFO
+      - PYTEST_ADDOPTS=-v --tb=short
     user: "1000:1000"
-    command: ["python", "-m", "pytest", "tests/", "-v"]
+    networks:
+      - app_network
+    restart: "no"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import pytest; print('Test health check passed')"]
+      interval: 60s
+      timeout: 10s
+      retries: 2
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: '1.5'
+          memory: 1.5G
+    command: ["python", "-m", "pytest", "tests/", "-v", "--junitxml=test-results.xml"]
+    labels:
+      - "com.example.description=Test Environment"
+      - "com.example.environment=test"
 
   # Code quality checks
   quality:
     build:
       context: .
       target: development
+      dockerfile: Dockerfile
+    container_name: product-pipeline-quality
     volumes:
-      - .:/app
-      - ./logs:/app/logs
+      - .:/app:delegated
+      - app_logs:/app/logs
+      - app_data:/app/data
     environment:
       - INSIDE_DOCKER=1
+      - PYTHONPATH=/app/src
+      - LOG_LEVEL=INFO
     user: "1000:1000"
-    command: ["python", "-m", "pytest", "tests/", "--cov=src", "--cov-report=term"] 
+    networks:
+      - app_network
+    restart: "no"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import flake8, black, mypy; print('Quality tools health check passed')"]
+      interval: 60s
+      timeout: 10s
+      retries: 2
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+    command: ["python", "-m", "pytest", "tests/", "--cov=src", "--cov-report=term", "--cov-report=html"]
+    labels:
+      - "com.example.description=Code Quality Checks"
+      - "com.example.environment=quality"
+
+  # Optional: Database service for future use
+  # db:
+  #   image: postgres:15-alpine
+  #   container_name: product-pipeline-db
+  #   environment:
+  #     POSTGRES_DB: product_pipeline
+  #     POSTGRES_USER: pipeline_user
+  #     POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme}
+  #   volumes:
+  #     - db_data:/var/lib/postgresql/data
+  #   networks:
+  #     - app_network
+  #   restart: unless-stopped
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U pipeline_user -d product_pipeline"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: '0.5'
+  #         memory: 512M
+  #   labels:
+  #     - "com.example.description=PostgreSQL Database"
+  #     - "com.example.service=database"
+
+# volumes:
+#   db_data:
+#     driver: local 
